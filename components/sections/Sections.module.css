@@ -1,0 +1,391 @@
+/* ==========================================================================
+   Section system
+   Six sections, six different layout families. Nothing here repeats the hero's
+   three-column split, and no two sections share a composition.
+
+   Structural rule: a section element must never create a stacking context.
+   No transform, no filter, no opacity < 1, no will-change on `.section`.
+   Section children opt into a layer explicitly, which is what lets the
+   oversized type sit BEHIND the fixed 3D can while the copy sits in front.
+   ========================================================================== */
+
+.section {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  padding: var(--section-pad) var(--gutter);
+}
+
+.inner {
+  position: relative;
+  z-index: var(--z-content);
+  width: 100%;
+  max-width: 1560px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: var(--fs-display);
+}
+
+/* Foreground fruit deliberately passes IN FRONT of the copy: that layering is
+   the prototype's signature. A soft shadow costs nothing when the copy is over
+   plain background and keeps it readable on the frames where a cherry crosses
+   a line, so the editorial device never turns into a legibility problem. */
+.lead,
+.body,
+.noteText,
+.noteName {
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+}
+
+.lead {
+  font-size: var(--fs-lead);
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.body {
+  color: var(--muted);
+  max-width: 42ch;
+}
+
+.body p + p {
+  margin-top: 1.1rem;
+}
+
+/* --------------------------------------------------------------------------
+   02 Story — a narrow reading rail on the left, the frame open on the right
+   where the can travels to. Deliberately not centred and not a split hero.
+   -------------------------------------------------------------------------- */
+
+.story {
+  align-items: center;
+}
+
+.storyInner {
+  display: grid;
+  grid-template-columns: minmax(0, 30rem) 1fr;
+  gap: 4rem;
+  align-items: end;
+}
+
+.storyRail {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* A hairline that grows with the section, marking the start of the narrative
+   without resorting to a numbered label. */
+.rule {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    var(--accent) 0%,
+    rgba(255, 255, 255, 0.14) 40%,
+    transparent 100%
+  );
+  transform-origin: left center;
+}
+
+/* --------------------------------------------------------------------------
+   03 Ingredients — one oversized word set BEHIND the product, tasting notes
+   collected in the lower right. The word is the composition.
+   -------------------------------------------------------------------------- */
+
+.ingredients {
+  align-items: flex-end;
+}
+
+.megaWord {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* Below the stage layer, so the can passes in front of it. */
+  z-index: var(--z-mega-type);
+  transform: translate(-50%, -50%);
+  font-family: var(--font-ui);
+  font-weight: 800;
+  font-size: var(--fs-mega);
+  line-height: 0.78;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.075);
+  pointer-events: none;
+  user-select: none;
+}
+
+.ingredientsInner {
+  display: grid;
+  grid-template-columns: minmax(0, 22rem) 1fr;
+  gap: 3rem;
+  align-items: end;
+}
+
+.notes {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.75rem 2.5rem;
+  justify-self: end;
+  max-width: 40rem;
+}
+
+.note {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  /* One hairline above each note, never a boxed row and never a card. */
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.noteName {
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.noteText {
+  font-size: var(--fs-small);
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+/* --------------------------------------------------------------------------
+   04 Taste — a diagonal: title top left, reading and metrics bottom right,
+   the product at its closest approach filling the middle.
+   -------------------------------------------------------------------------- */
+
+.taste {
+  align-items: stretch;
+}
+
+.tasteInner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4rem;
+  min-height: min(74vh, 700px);
+}
+
+.tasteTop {
+  max-width: 40rem;
+}
+
+.tasteBottom {
+  align-self: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 26rem;
+  text-align: right;
+}
+
+.metrics {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.metric {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 0.75rem 1rem;
+}
+
+.metricLabel {
+  font-family: var(--font-ui);
+  font-size: var(--fs-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.metricValue {
+  font-family: var(--font-ui);
+  font-size: var(--fs-small);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+/* A drawn line, not a filled progress track: the bar is the measurement, and
+   an empty grey channel behind it would only add dashboard furniture. */
+.metricBar {
+  grid-column: 1 / -1;
+  height: 1px;
+  background: var(--accent);
+  transform-origin: right center;
+  transform: scaleX(0);
+}
+
+/* --------------------------------------------------------------------------
+   05 Detail — five full-width type rows that drift under scroll. Alternating
+   alignment turns a specification list into a rhythm.
+   -------------------------------------------------------------------------- */
+
+.detail {
+  align-items: center;
+}
+
+.detailInner {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 2.2vh, 1.5rem);
+}
+
+.detailRow {
+  font-family: var(--font-ui);
+  font-weight: 800;
+  font-size: clamp(2rem, 7vw, 6rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--text);
+}
+
+.detailRow:nth-child(even) {
+  align-self: flex-end;
+  /* Outlined rows alternate with solid ones so the column reads as a pattern
+     rather than as five headings in a stack. */
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.55);
+}
+
+/* --------------------------------------------------------------------------
+   06 Final — the journey closes where it opened: product centred, one line of
+   type, one action.
+   -------------------------------------------------------------------------- */
+
+.final {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding-bottom: 12rem;
+}
+
+.finalInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.finalTitle {
+  font-size: var(--fs-hero);
+}
+
+.finalCta {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.4rem 0.4rem 0.4rem 1.75rem;
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 1rem;
+  white-space: nowrap;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.finalCta:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+.finalCta:active {
+  transform: translateY(-1px);
+}
+
+.finalArrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--accent-ink);
+  color: var(--accent);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.finalMeta {
+  font-family: var(--font-ui);
+  font-size: var(--fs-small);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1100px) {
+  .storyInner,
+  .ingredientsInner {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .notes {
+    justify-self: stretch;
+    max-width: none;
+  }
+
+  .tasteBottom {
+    align-self: stretch;
+    max-width: none;
+    text-align: left;
+  }
+
+  .metricBar {
+    transform-origin: left center;
+  }
+}
+
+@media (max-width: 760px) {
+  .section {
+    /* The product sits low on mobile, so copy is pushed to the top of the
+       frame rather than centred over it. */
+    align-items: flex-start;
+    padding: 7rem var(--gutter) 9rem;
+    min-height: auto;
+  }
+
+  .taste .tasteInner {
+    min-height: auto;
+  }
+
+  .notes {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .megaWord {
+    font-size: clamp(4rem, 26vw, 9rem);
+  }
+
+  .detailRow {
+    font-size: clamp(1.5rem, 9vw, 2.75rem);
+    align-self: flex-start;
+  }
+
+  .detailRow:nth-child(even) {
+    align-self: flex-start;
+  }
+
+  .final {
+    padding-bottom: 9rem;
+  }
+}

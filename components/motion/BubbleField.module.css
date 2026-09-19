@@ -1,0 +1,18 @@
+.field {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-bubbles);
+  pointer-events: none;
+  overflow: hidden;
+  contain: strict;
+}
+
+.bubble {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: auto;
+  opacity: 0;
+  /* The transform is rewritten every frame by the pool, so the element is
+     already composited; promoting it again buys nothing. */
+}

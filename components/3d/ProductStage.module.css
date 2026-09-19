@@ -1,0 +1,128 @@
+/* The stage is split across two fixed layers so the product can sit BEHIND the
+   editorial copy while the foreground fruit sits IN FRONT of it. That depth
+   sandwich is the prototype's signature and it is what stops the composition
+   from reading as a flat hero image. */
+
+.back,
+.front {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  /* The stage never scrolls, so it never needs to be composited against the
+     document flow. Isolating it keeps its blurs off the rest of the page. */
+  contain: layout paint size;
+}
+
+.back {
+  z-index: var(--z-stage-back);
+}
+
+.front {
+  z-index: var(--z-stage-front);
+}
+
+/* Ambient light behind the can, tinted by the active product. */
+.glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    var(--bg-aura) 0%,
+    transparent 62%
+  );
+  will-change: opacity;
+}
+
+/* Receives the composed scroll + float transform. Everything about where the
+   can sits on the page happens here, once per frame. */
+.canStage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+
+/* Owned exclusively by the first-load reveal (opacity, scale, blur). Kept
+   separate from .canStage so the per-frame ticker and the entrance timeline
+   never write the same property. */
+.canReveal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  /* No `opacity: 0` here on purpose. The entrance hides this element in a
+     layout effect, which still beats first paint, and that way a page where
+     JavaScript never runs shows the can instead of an empty stage. */
+}
+
+.can {
+  width: 80vw;
+  height: 80vh;
+  outline: none;
+  pointer-events: none;
+  /* Transparent chrome: the prototype hid model-viewer's loading affordances so
+     the product simply resolves out of the background. */
+  --progress-bar-color: transparent;
+  --progress-bar-height: 0px;
+  --poster-color: transparent;
+  will-change: filter;
+}
+
+/* --- Parallax containers ---------------------------------------------- */
+
+.layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.fruit {
+  position: absolute;
+  outline: none;
+  --progress-bar-color: transparent;
+  --progress-bar-height: 0px;
+  --poster-color: transparent;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+  /* Deliberately NO css transition here. The per-frame force field writes
+     `transform` directly, and a transition on the same property would fight
+     every write and turn the repulsion into rubber-banding.
+
+     Also deliberately no `will-change`: each fruit is already a model-viewer
+     with its own compositing surface, and permanently promoting thirteen of
+     them costs real VRAM at 2x DPR for no gain, since a transform written
+     every frame is promoted by the compositor anyway. */
+}
+
+.leaf {
+  position: absolute;
+  outline: none;
+  --progress-bar-color: transparent;
+  --progress-bar-height: 0px;
+  --poster-color: transparent;
+  filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+}
+
+/* --- Responsive -------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .can {
+    width: 118vw;
+    height: 62vh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .canStage,
+  .layer,
+  .fruit,
+  .leaf,
+  .glow {
+    will-change: auto;
+  }
+}

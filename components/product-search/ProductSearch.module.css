@@ -1,0 +1,209 @@
+.dock {
+  position: fixed;
+  left: 50%;
+  bottom: 2rem;
+  transform: translateX(-50%);
+  z-index: var(--z-search);
+  width: min(440px, calc(100vw - 2 * var(--gutter)));
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.6rem;
+  pointer-events: auto;
+}
+
+/* --- Suggestions ------------------------------------------------------- */
+/* Sit ABOVE the bar so the bar never moves when results appear. A list that
+   pushes its own trigger around is what makes search feel like a page. */
+
+.results {
+  list-style: none;
+  overflow: hidden;
+  border-radius: var(--r-card);
+  background: rgba(10, 12, 14, 0.55);
+  border: 1px solid var(--glass-border-strong);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+}
+
+.result {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.7rem 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.result + .result {
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.result:hover,
+.result[data-highlighted='true'] {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.resultCan {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+}
+
+.resultText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.resultName {
+  font-family: var(--font-ui);
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.resultFlavor {
+  font-size: var(--fs-micro);
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The colour world, as a colour rather than as a word. */
+.swatch {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+
+.resultPrice {
+  flex: none;
+  font-size: var(--fs-micro);
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.empty {
+  padding: 1rem 1.1rem;
+  font-size: var(--fs-small);
+  color: var(--muted);
+  text-align: center;
+}
+
+.emptyQuery {
+  color: var(--accent);
+}
+
+/* --- The bar ----------------------------------------------------------- */
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  height: 48px;
+  padding: 0 0.55rem 0 1.1rem;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--glass-border-strong);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  transition:
+    background-color 0.35s ease,
+    border-color 0.35s ease,
+    box-shadow 0.35s ease;
+  cursor: text;
+}
+
+.bar:hover {
+  background: rgba(255, 255, 255, 0.11);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.bar[data-open='true'] {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--accent);
+}
+
+.icon {
+  flex: none;
+  color: var(--muted);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+}
+
+.input::placeholder {
+  /* Contrast checked against the darkest world (#010c14): passes AA at this size. */
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.hint {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.28rem 0.55rem;
+  border-radius: var(--r-sm);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.clear {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.clear:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text);
+}
+
+/* --- Responsive --------------------------------------------------------- */
+
+@media (max-width: 620px) {
+  .dock {
+    bottom: 1.1rem;
+  }
+
+  .hint {
+    display: none;
+  }
+}
